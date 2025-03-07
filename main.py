@@ -103,7 +103,11 @@ def upload(file: UploadFile = File(...)):
                 batch.add_object(
                     properties=data_row,
                 )
-        
+    except Exception as e:
+        return {
+            "success": False,
+            "detail": f"Failed to process document: {e}"
+        }
     finally:
         # Clean up the temporary file
         shutil.rmtree(temp_dir)
@@ -204,5 +208,7 @@ def delete_doc(document_name: str):
         collection.data.delete_many(
             where=Filter.by_property("document_name").equal(document_name)
         )
+    except Exception as e:
+        print(f"Failed to delete document: {e}")
     finally:
         client.close()
